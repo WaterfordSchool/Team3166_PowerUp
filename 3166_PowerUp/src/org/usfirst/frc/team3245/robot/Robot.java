@@ -10,12 +10,35 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * documentation. If you change the name of this class or the package after
  * creating this project, you must also update the manifest file in the resource
  * directory.
+ *
+ *
+ *This is the best repository don't @ me
  */
 public class Robot extends IterativeRobot {
 	final String defaultAuto = "Default";
 	final String customAuto = "My Auto";
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
+	
+		Accelerometer accel = new BuiltInAccelerometer();
+			double xVal,yVal,maxY,zVal,maxZ;
+			
+			//Two controllers, one driver one operator
+		Joystick drivercontrol = new Joystick(0);
+		Joystick operatorcontrol = new Joystick(1);
+			//Two Driving Motor Controls
+		Talon rightdrive = new Talon (0);
+		Talon leftdrive = new Talon (1);
+		//With this template, you can define more motor commands
+		
+	double fastLeft = 1, fastRight = 1, slowLeft = .5, slowRight = .5,// topslowspeed = .6
+			
+	// Slow factor is the number you want the top speed to be divided by
+			// if slow factor is 2, top speed is 50%
+			//if slow factor is 3, top speed is 33%
+	slowfactor = 2;
+	
+		
 
 	/**
 	 * This function is run when the robot is first started up and should be
