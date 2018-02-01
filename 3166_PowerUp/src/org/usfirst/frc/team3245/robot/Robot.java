@@ -27,7 +27,7 @@ public class Robot extends IterativeRobot {
 		Joystick drivercontrol = new Joystick(0);
 		Joystick operatorcontrol = new Joystick(1);
 			//Two Driving Motor Controls
-		Talon rightdrive = new Talon (0);
+		Talon rightdrive = new Talon (0);          //This is defining the PWMs because I'm special
 		Talon leftdrive = new Talon (1);
 		//With this template, you can define more motor commands
 		
@@ -91,6 +91,17 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		// right side controls right, left side controls left on the controller
+		//you can check this on driver station (ask Zahara if you don't know how)
+		fastLeft = drivercontrol.getRawAxis(1);
+		fastRight = drivercontrol.getRawAxis(3);
+
+		//Fast buttons and slow bottons on controller
+		if(drivercontrol.getRawButton(6)) {
+			leftDrive.set(fastLeft *.3);
+			rightDrive.set(fastRight *.3);
+		}
+		
 	}
 
 	/**
