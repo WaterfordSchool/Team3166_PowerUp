@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,12 +29,14 @@ public class Robot extends IterativeRobot {
 	Talon leftDrive1 = new Talon(1);
 	Talon rightDrive3 = new Talon(3);
 	Talon rightDrive4 = new Talon(4);
+	Talon shooter6 = new Talon(6);
+	Talon intake7 = new Talon(7);
 	SpeedControllerGroup leftDrive = new SpeedControllerGroup (leftDrive0, leftDrive1);
 	SpeedControllerGroup rightDrive = new SpeedControllerGroup (rightDrive3, rightDrive4);
 	DifferentialDrive tDrive = new DifferentialDrive (leftDrive, rightDrive);
 	Joystick drivercontroller = new Joystick (0);
 	Joystick operatorcontroller = new Joystick (1);
-	
+	JoystickButton rightTrigger = new JoystickButton (operatorcontroller, 8);
 	
 	
 	
@@ -94,8 +97,12 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 	tDrive.tankDrive(-drivercontroller.getY(), -drivercontroller.getAxis(AxisType.kThrottle));
-	
-	
+	if (operatorcontroller.getY() != 0) {
+		shooter6.set(-operatorcontroller.getY());
+	}
+	else{
+		shooter6.set(0);
+	}
 	
 	
 	
