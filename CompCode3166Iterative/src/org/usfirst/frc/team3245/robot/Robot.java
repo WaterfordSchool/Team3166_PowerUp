@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
+/* Copyright (c) 2017-2018 FIRST.ll Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,6 +7,8 @@
 
 package org.usfirst.frc.team3245.robot;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Joystick.AxisType;
@@ -16,7 +18,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj.Timer;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -37,14 +39,14 @@ public class Robot extends IterativeRobot {
 	Joystick drivercontroller = new Joystick (0);
 	Joystick operatorcontroller = new Joystick (1);
 	JoystickButton rightTrigger = new JoystickButton (operatorcontroller, 8);
-	
-	
-	
+	Timer autoTimer = new Timer();
+	ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 	private static final String kDefaultAuto = "Default";
-	private static final String kCustomAuto = "My Auto";
+	private static final String kRPos = "Right Position";
+	private static final String kMPos = "Middle Position";
+	private static final String kLPos = "Left Position";
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
-
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -52,8 +54,11 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		m_chooser.addDefault("Default Auto", kDefaultAuto);
-		m_chooser.addObject("My Auto", kCustomAuto);
+		m_chooser.addObject("Right Position", kRPos);
+		m_chooser.addObject("Middle Position", kMPos);
+		m_chooser.addObject("Left Position", kLPos);
 		SmartDashboard.putData("Auto choices", m_chooser);
+		
 	}
 
 	/**
@@ -69,10 +74,62 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		String gameData;
+		gameData = DriverStation.getInstance().getGameSpecificMessage();
+		autoTimer.reset();
+		autoTimer.start();
 		m_autoSelected = m_chooser.getSelected();
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
 		System.out.println("Auto selected: " + m_autoSelected);
+
+		switch (m_autoSelected) {
+			case kRPos:
+				if(gameData.charAt(0) == 'R') {
+					go(2);
+					gyroTurnLeft();
+					go(1);
+					shooter();
+					// Put custom auto code here
+					
+				}
+				else {
+					go(2);
+				}
+				break;
+			
+			case kMPos:
+				if(gameData.charAt(0) == 'R') {
+					go(2);
+					shooter();
+				}
+				else {
+					go(2);
+				}
+				break;
+			
+			
+			case kLPos:
+				if(gameData.charAt(0) == 'L') {
+					go(2);
+					gyroTurnRight();
+					go(1);
+					shooter();
+				}
+				else {
+					go(2);
+				}
+				break;
+			
+			case kDefaultAuto:
+			default:
+				go(2);
+				
+				
+					// Put default auto code here
+				break;
+		}
+
 	}
 
 	/**
@@ -80,16 +137,9 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		switch (m_autoSelected) {
-			case kCustomAuto:
-				// Put custom auto code here
-				break;
-			case kDefaultAuto:
-			default:
-				// Put default auto code here
-				break;
-		}
+
 	}
+	
 
 	/**
 	 * This function is called periodically during operator control.
@@ -97,13 +147,15 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 	tDrive.tankDrive(-drivercontroller.getY(), -drivercontroller.getAxis(AxisType.kThrottle));
-	if (operatorcontroller.getY() != 0) {
-		shooter6.set(-operatorcontroller.getY());
+	if (operatorcontroller.getY() > 0.05) {
+		shooter6.set(operatorcontroller.getY());
 	}
-	else{
+	else if(operatorcontroller.getY() < -0.05){
+		shooter6.set(operatorcontroller.getY());
+	}
+	else {
 		shooter6.set(0);
 	}
-	
 	
 	
 	
@@ -116,4 +168,41 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 	}
+
+	
+	public void gyroTurnRight() {
+		gyro.reset();
+		while(gyro.getAngle() < 90) {
+			tDrive.tankDrive(0.5, -0.5);
+		}
+		tDrive.tankDrive(0, 0);
+		}
+	
+	public void gyroTurnLeft() {
+		gyro.reset();
+		while(gyro.getAngle() > -90) {
+			tDrive.tankDrive(-0.5, 0.5);
+			SmartDashboard.putNumber("Gyro Heading", gyro.getAngle());
+		}
+		tDrive.tankDrive(0, 0);
+		}	
+
+		public void go(double timeGo) {
+			autoTimer.reset();
+			while(autoTimer.get() < timeGo ) {
+				tDrive.tankDrive(0.7, 0.7);	
+				}
+				tDrive.tankDrive(0, 0);
+		}
+		public void shooter() {
+			autoTimer.reset();
+			while(autoTimer.get() < 2) {
+				shooter6.set(-0.6);
+					}
+			
+			shooter6.set(0);
+		}
+	
+	
 }
+
