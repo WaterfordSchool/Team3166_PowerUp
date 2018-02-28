@@ -156,8 +156,12 @@ public class Robot extends IterativeRobot {
 	else {
 		shooter6.set(0);
 	}
-	
-	
+	if (operatorcontroller.getAxis(AxisType.kThrottle) > 0){
+		intake7.set(1);
+	}
+	else if(operatorcontroller.getAxis(AxisType.kThrottle) < 0){
+		intake7.set(-1);
+	}
 	
 	
 	}
