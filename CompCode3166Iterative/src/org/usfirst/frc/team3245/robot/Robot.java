@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team3245.robot;
 
+
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -90,11 +91,11 @@ public class Robot extends IterativeRobot {
 					gyroTurnLeft();
 					go(1);
 					shooter();
-					// Put custom auto code here
-					
+					SmartDashboard.putNumber("Gyro heading is :", gyro.getAngle() );
 				}
 				else {
 					go(2);
+					SmartDashboard.putNumber("Gyro heading is :", gyro.getAngle() );
 				}
 				break;
 			
@@ -102,9 +103,11 @@ public class Robot extends IterativeRobot {
 				if(gameData.charAt(0) == 'R') {
 					go(2);
 					shooter();
+					SmartDashboard.putNumber("Gyro heading is :", gyro.getAngle() );
 				}
 				else {
 					go(2);
+					SmartDashboard.putNumber("Gyro heading is :", gyro.getAngle() );
 				}
 				break;
 			
@@ -115,18 +118,19 @@ public class Robot extends IterativeRobot {
 					gyroTurnRight();
 					go(1);
 					shooter();
+					SmartDashboard.putNumber("Gyro heading is :", gyro.getAngle() );
 				}
 				else {
 					go(2);
+					SmartDashboard.putNumber("Gyro heading is :", gyro.getAngle() );
 				}
 				break;
 			
 			case kDefaultAuto:
 			default:
 				go(2);
-				
-				
-					// Put default auto code here
+				SmartDashboard.putNumber("Gyro heading is :", gyro.getAngle() );
+				// Put default auto code here
 				break;
 		}
 
@@ -149,21 +153,19 @@ public class Robot extends IterativeRobot {
 	tDrive.tankDrive(-drivercontroller.getY(), -drivercontroller.getAxis(AxisType.kThrottle));
 	if (operatorcontroller.getY() > 0.05) {
 		shooter6.set(operatorcontroller.getY());
-	}
+		}
 	else if(operatorcontroller.getY() < -0.05){
 		shooter6.set(operatorcontroller.getY());
-	}
+		}
 	else {
 		shooter6.set(0);
-	}
+		}
 	if (operatorcontroller.getAxis(AxisType.kThrottle) > 0){
 		intake7.set(1);
-	}
+		}
 	else if(operatorcontroller.getAxis(AxisType.kThrottle) < 0){
 		intake7.set(-1);
-	}
-	
-	
+		}
 	}
 
 	/**
@@ -176,14 +178,17 @@ public class Robot extends IterativeRobot {
 	
 	public void gyroTurnRight() {
 		gyro.reset();
+		SmartDashboard.putNumber("Gyro Heading", gyro.getAngle());
 		while(gyro.getAngle() < 90) {
 			tDrive.tankDrive(0.5, -0.5);
+			SmartDashboard.putNumber("Gyro Heading", gyro.getAngle());
 		}
 		tDrive.tankDrive(0, 0);
 		}
 	
 	public void gyroTurnLeft() {
 		gyro.reset();
+		SmartDashboard.putNumber("Gyro Heading", gyro.getAngle());
 		while(gyro.getAngle() > -90) {
 			tDrive.tankDrive(-0.5, 0.5);
 			SmartDashboard.putNumber("Gyro Heading", gyro.getAngle());
@@ -191,19 +196,19 @@ public class Robot extends IterativeRobot {
 		tDrive.tankDrive(0, 0);
 		}	
 
-		public void go(double timeGo) {
-			autoTimer.reset();
-			while(autoTimer.get() < timeGo ) {
-				tDrive.tankDrive(0.7, 0.7);	
-				}
-				tDrive.tankDrive(0, 0);
+	public void go(double timeGo) {
+		autoTimer.reset();
+		while(autoTimer.get() < timeGo ) {
+			tDrive.tankDrive(0.7, 0.7);	
+			}
+			tDrive.tankDrive(0, 0);
 		}
-		public void shooter() {
-			autoTimer.reset();
-			while(autoTimer.get() < 2) {
-				shooter6.set(-0.6);
-					}
-			
+		
+	public void shooter() {
+		autoTimer.reset();
+		while(autoTimer.get() < 2) {
+			shooter6.set(-0.6);
+			}
 			shooter6.set(0);
 		}
 	
